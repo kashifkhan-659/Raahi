@@ -373,4 +373,4 @@ elif st.session_state["app_section"] == "quiz":
 else:
     show_results()
 
-st.caption("Raahi MVP | Built for [Hackathon Name] | Data based on 2024 admissions")
+st.caption("Raahi MVP | Built for AtomCamp's Hackathon '26 | Data based on 2024-2025 admissions")
