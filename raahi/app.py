@@ -4,8 +4,8 @@ from pathlib import Path
 
 import streamlit as st
 
-from raahi.components.result_card import show_result_card
-from raahi.logic import matcher
+from components.result_card import show_result_card
+from logic import matcher
 
 
 COMPASS_ICON = "\U0001f9ed"
