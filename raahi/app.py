@@ -1,5 +1,4 @@
 import json
-import time
 from pathlib import Path
 
 import streamlit as st
@@ -9,17 +8,91 @@ from logic import matcher
 
 
 COMPASS_ICON = "\U0001f9ed"
-PROFILE_ICON = "\U0001f4dd"
-QUIZ_ICON = "\U0001f9e0"
-RESULTS_ICON = "\U0001f3af"
+ACADEMIC_ICON = "\U0001f4ca"
+BUDGET_ICON = "\U0001f4b0"
 CITY_ICON = "\U0001f3d9\ufe0f"
 LOCATION_ICON = "\U0001f4cd"
 PERSON_ICON = "\U0001f464"
 RIGHT_ARROW = "\u2192"
 LEFT_ARROW = "\u2190"
+MIDDLE_DOT = "\u00b7"
 FIELDS_PATH = Path(__file__).resolve().parent / "data" / "fields.json"
 
-st.set_page_config(page_title="Raahi", page_icon=COMPASS_ICON, layout="wide")
+st.set_page_config(page_title="Raahi", page_icon="🧭", layout="centered")
+
+st.markdown(
+    """
+    <style>
+    :root {
+        --raahi-teal: #0F6E56;
+        --raahi-border: #E5E7EB;
+        --raahi-muted: #64748B;
+        --raahi-bg: #F8FAFC;
+    }
+
+    html, body, [data-testid="stAppViewContainer"] {
+        background: var(--raahi-bg);
+        overflow-x: hidden;
+    }
+
+    .main .block-container {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 2rem 1rem 3rem;
+    }
+
+    [data-testid="stForm"],
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        background: #FFFFFF;
+        border: 1px solid var(--raahi-border);
+        border-radius: 8px;
+    }
+
+    h1, h2, h3 {
+        color: #0F172A;
+        letter-spacing: 0;
+    }
+
+    .stButton > button {
+        border-radius: 6px;
+        font-weight: 700;
+    }
+
+    .stButton > button[kind="primary"] {
+        background: var(--raahi-teal);
+        border-color: var(--raahi-teal);
+    }
+
+    .stProgress > div > div > div > div {
+        background-color: var(--raahi-teal);
+    }
+
+    [data-testid="stAlert"] {
+        background: #E7F5F1;
+        border: 1px solid #B7DED3;
+        border-radius: 8px;
+        color: #123D33;
+    }
+
+    [data-testid="stMarkdownContainer"],
+    [data-testid="stCaptionContainer"] {
+        overflow-wrap: anywhere;
+    }
+
+    section[data-testid="stSidebar"] {
+        display: none;
+    }
+
+    @media (max-width: 640px) {
+        .main .block-container {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 CITIES = [
     "Islamabad",
@@ -33,7 +106,17 @@ CITIES = [
     "Other",
 ]
 
-STUDY_CITY_OPTIONS = CITIES + ["Any"]
+STUDY_CITY_OPTIONS = [
+    "Islamabad",
+    "Rawalpindi",
+    "Lahore",
+    "Karachi",
+    "Peshawar",
+    "Quetta",
+    "Multan",
+    "Faisalabad",
+    "Any",
+]
 
 FIELD_KEYS = [
     "CS",
@@ -143,11 +226,7 @@ QUIZ_QUESTIONS = [
 
 def initialize_state():
     if "page" not in st.session_state:
-        st.session_state["page"] = st.session_state.get("app_section", "profile")
-    if "app_section" not in st.session_state:
-        st.session_state["app_section"] = st.session_state["page"]
-    else:
-        st.session_state["app_section"] = st.session_state["page"]
+        st.session_state["page"] = "profile"
     if "quiz_question_index" not in st.session_state:
         st.session_state["quiz_question_index"] = 0
     if "quiz_answers" not in st.session_state:
@@ -156,7 +235,12 @@ def initialize_state():
 
 def set_page(page):
     st.session_state["page"] = page
-    st.session_state["app_section"] = page
+
+
+def show_step(progress_value, label):
+    st.progress(progress_value)
+    st.caption(label)
+    st.markdown("<br>", unsafe_allow_html=True)
 
 
 def calculate_field_scores(answers):
@@ -198,189 +282,166 @@ def reset_app():
         del st.session_state[key]
 
 
-def show_profile_form():
-    st.markdown(
-        (
-            "<div class='welcome-banner'>"
-            f"{COMPASS_ICON} Welcome to Raahi \u2014 Find your realistic university "
-            "path in Pakistan"
-            "</div>"
-        ),
-        unsafe_allow_html=True,
+def show_profile_page():
+    profile = st.session_state.get("student_profile", {})
+    default_city = profile.get("home_city", "Islamabad")
+    default_gender = profile.get("gender", "Prefer not to say")
+    preferred_default = profile.get("preferred_study_cities", ["Any"])
+
+    st.title("🧭 Raahi")
+    st.caption("University guidance for Pakistani students")
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    show_step(0.33, "Step 1 of 3 \u2014 Your Profile")
+
+    st.info(
+        "Answer a few questions and Raahi will find your 3 most realistic "
+        "university paths \u2014 based on your marks, budget, and how you think."
     )
     st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown(f"## {PROFILE_ICON} Student Profile")
-    st.markdown("<br>", unsafe_allow_html=True)
 
-    with st.form("student_profile_form"):
-        academic_col, budget_col = st.columns(2)
+    with st.container(border=True):
+        st.subheader(f"{ACADEMIC_ICON} Academic info")
+        fsc_col, city_col = st.columns(2)
 
-        with academic_col:
-            fsc_percentage = st.number_input(
-                "\U0001f4ca Your FSc Percentage",
+        with fsc_col:
+            fsc = st.number_input(
+                "FSc Percentage",
                 min_value=40.0,
                 max_value=100.0,
-                value=75.0,
+                value=float(profile.get("fsc_percentage", 75.0)),
                 step=0.5,
             )
 
-        with budget_col:
-            annual_budget_pkr = st.slider(
-                "\U0001f4b0 Annual Budget (PKR)",
-                min_value=50000,
-                max_value=800000,
-                value=300000,
-                step=25000,
-                format="PKR %d",
-            )
-            st.caption(f"PKR {annual_budget_pkr:,}/year")
-
-        st.markdown("---")
-
-        city_col, preference_col = st.columns(2)
-
         with city_col:
-            home_city = st.selectbox(f"{CITY_ICON} Your Home City", CITIES)
-
-        with preference_col:
-            preferred_study_cities = st.multiselect(
-                f"{LOCATION_ICON} Preferred Study Cities",
-                STUDY_CITY_OPTIONS,
-                default=["Any"],
+            city = st.selectbox(
+                f"{CITY_ICON} Home City",
+                CITIES,
+                index=CITIES.index(default_city) if default_city in CITIES else 0,
             )
 
-        st.markdown("---")
+    st.markdown("<br>", unsafe_allow_html=True)
+    with st.container(border=True):
+        st.subheader(f"{BUDGET_ICON} Annual Budget")
+        budget = st.slider(
+            "",
+            min_value=50000,
+            max_value=800000,
+            value=int(profile.get("annual_budget_pkr", 300000)),
+            step=25000,
+        )
+        st.caption(f"PKR {budget:,} per year")
 
+    st.markdown("<br>", unsafe_allow_html=True)
+    with st.container(border=True):
+        st.subheader(f"{LOCATION_ICON} Preferences")
+        preferred_cities = st.multiselect(
+            "Preferred study cities",
+            STUDY_CITY_OPTIONS,
+            default=[city for city in preferred_default if city in STUDY_CITY_OPTIONS]
+            or ["Any"],
+        )
         gender = st.radio(
-            f"{PERSON_ICON} Gender",
+            f"{PERSON_ICON} Gender (optional \u2014 affects hostel info)",
             ["Male", "Female", "Prefer not to say"],
+            index=(
+                ["Male", "Female", "Prefer not to say"].index(default_gender)
+                if default_gender in ["Male", "Female", "Prefer not to say"]
+                else 2
+            ),
             horizontal=True,
         )
 
-        st.markdown("<br>", unsafe_allow_html=True)
-        submitted = st.form_submit_button(
-            f"Find My Path {RIGHT_ARROW}",
-            use_container_width=True,
-        )
-
-    if submitted:
-        with st.spinner("Calculating your path..."):
-            time.sleep(1)
-
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button(
+        f"Next {RIGHT_ARROW} Personality Quiz",
+        use_container_width=True,
+        type="primary",
+    ):
         st.session_state["student_profile"] = {
-            "fsc_percentage": fsc_percentage,
-            "home_city": home_city,
-            "annual_budget_pkr": annual_budget_pkr,
-            "preferred_study_cities": preferred_study_cities,
+            "fsc_percentage": fsc,
+            "home_city": city,
+            "annual_budget_pkr": budget,
+            "preferred_study_cities": preferred_cities,
             "gender": gender,
         }
-        set_page("quiz")
         st.session_state["quiz_question_index"] = 0
         st.session_state["quiz_answers"] = {}
+        st.session_state.pop("field_scores", None)
+        st.session_state.pop("top_recommendations", None)
+        set_page("quiz")
         st.rerun()
 
 
-def show_quiz():
+def show_quiz_page():
     question_index = st.session_state["quiz_question_index"]
     question_data = QUIZ_QUESTIONS[question_index]
     total_questions = len(QUIZ_QUESTIONS)
+    q_num = question_index + 1
     saved_answer = st.session_state["quiz_answers"].get(question_index, 0)
 
-    st.markdown(f"## {QUIZ_ICON} Personality Quiz")
-    st.markdown("<br>", unsafe_allow_html=True)
+    show_step(0.66, "Step 2 of 3 \u2014 Personality Quiz")
 
-    if st.button(f"{LEFT_ARROW} Back", key="back_to_profile"):
+    if st.button(f"{LEFT_ARROW} Back"):
         set_page("profile")
         st.rerun()
 
     st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown(f"**Question {question_index + 1} of {total_questions}**")
-    st.progress((question_index + 1) / total_questions)
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.caption(f"Question {q_num} of {total_questions}")
+    st.subheader(question_data["question"])
 
-    st.markdown(f"### {question_data['question']}")
     selected_option_index = st.radio(
         "Choose one",
         range(len(question_data["options"])),
         format_func=lambda option_index: question_data["options"][option_index][0],
         index=saved_answer,
-        label_visibility="collapsed",
         key=f"quiz_question_{question_index}",
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
-    back_col, next_col = st.columns([1, 2])
+    button_label = (
+        f"See My Results {RIGHT_ARROW}"
+        if question_index == total_questions - 1
+        else f"Next Question {RIGHT_ARROW}"
+    )
 
-    with back_col:
-        previous_clicked = st.button(
-            f"{LEFT_ARROW} Back",
-            key=f"previous_question_{question_index}",
-            use_container_width=True,
-        )
-        if previous_clicked and question_index > 0:
-            st.session_state["quiz_answers"][question_index] = selected_option_index
-            st.session_state["quiz_question_index"] -= 1
-            st.rerun()
-        if previous_clicked and question_index == 0:
-            set_page("profile")
-            st.rerun()
+    if st.button(button_label, use_container_width=True, type="primary"):
+        st.session_state["quiz_answers"][question_index] = selected_option_index
 
-    with next_col:
-        is_last_question = question_index == total_questions - 1
-        button_label = (
-            f"See My Results {RIGHT_ARROW}"
-            if is_last_question
-            else f"Next Question {RIGHT_ARROW}"
-        )
+        if question_index == total_questions - 1:
+            st.session_state["field_scores"] = calculate_field_scores(
+                st.session_state["quiz_answers"]
+            )
+            st.session_state.pop("top_recommendations", None)
+            set_page("results")
+        else:
+            st.session_state["quiz_question_index"] += 1
 
-        if st.button(button_label, type="primary", use_container_width=True):
-            st.session_state["quiz_answers"][question_index] = selected_option_index
-
-            if is_last_question:
-                st.session_state["field_scores"] = calculate_field_scores(
-                    st.session_state["quiz_answers"]
-                )
-                st.session_state.pop("top_recommendations", None)
-                set_page("results")
-            else:
-                st.session_state["quiz_question_index"] += 1
-
-            st.rerun()
+        st.rerun()
 
 
-def show_results():
+def show_results_page():
     profile = st.session_state.get("student_profile")
     scores = st.session_state.get("field_scores", {})
 
     if not profile or not scores:
         st.warning("Please complete your profile and quiz first.")
-        if st.button("Start Over"):
+        if st.button("Start Over", use_container_width=True):
             reset_app()
             st.rerun()
         return
 
-    st.markdown(f"## {RESULTS_ICON} Your Raahi Results")
-    st.caption("Based on your marks, budget, and thinking style")
-    st.markdown("<br>", unsafe_allow_html=True)
+    show_step(1.0, "Step 3 of 3 \u2014 Your Results")
 
-    st.markdown(
-        (
-            "<div style='border:1px solid #e5e7eb;border-radius:8px;"
-            "padding:0.8rem 1rem;margin:1rem 0;background:#f9fafb;"
-            "font-weight:600;overflow-wrap:anywhere;'>"
-            f"FSc: {profile['fsc_percentage']:.1f}% | "
-            f"Budget: PKR {profile['annual_budget_pkr']:,}/year | "
-            f"Top Interest: {get_top_interest(scores)}"
-            "</div>"
-        ),
-        unsafe_allow_html=True,
-    )
+    top_field = get_top_interest(scores)
+    fsc = profile["fsc_percentage"]
+    budget = profile["annual_budget_pkr"]
+    st.info(f"FSc: {fsc:.1f}% {MIDDLE_DOT} Budget: PKR {budget:,}/year {MIDDLE_DOT} Top interest: {top_field}")
 
-    st.markdown("<br>", unsafe_allow_html=True)
     fields_data = load_fields_data()
 
     if "top_recommendations" not in st.session_state:
-        with st.spinner("Raahi is finding your path..."):
+        with st.spinner("Finding your most realistic paths..."):
             st.session_state["top_recommendations"] = matcher.get_top_3(
                 fsc_percentage=profile["fsc_percentage"],
                 annual_budget=profile["annual_budget_pkr"],
@@ -390,14 +451,15 @@ def show_results():
             )
 
     recommendations = st.session_state.get("top_recommendations", [])
+    st.markdown("<br>", unsafe_allow_html=True)
+
     if not recommendations:
-        st.info(
-            "No recommendations matched this profile yet. Try increasing the budget "
-            "or choosing Any city."
+        st.warning(
+            "No recommendations matched this profile yet. Try increasing the "
+            "budget or choosing Any city."
         )
     else:
-        st.markdown("<br>", unsafe_allow_html=True)
-        for index, result in enumerate(recommendations, start=1):
+        for index, result in enumerate(recommendations[:3], start=1):
             field_data = get_field_data_for_result(result, fields_data)
             show_result_card(result.get("rank", index), result, field_data)
 
@@ -409,97 +471,11 @@ def show_results():
 
 initialize_state()
 
-with st.sidebar:
-    st.markdown(f"## {COMPASS_ICON} About Raahi")
-    st.write(
-        "Raahi helps students compare realistic university paths using marks, "
-        "budget, city preference, and interests."
-    )
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.markdown(f"### {QUIZ_ICON} How it works")
-    st.markdown(
-        """
-        - Enter your academic profile and budget.
-        - Answer a short interest quiz.
-        - Review your top matched university programs.
-        """
-    )
-    st.markdown("---")
-    st.caption("Built by Team Raahi | AtomCamp Hackathon '26")
-
-st.title(f"{COMPASS_ICON} Raahi")
-st.caption("Find your realistic university path")
-st.markdown("<br>", unsafe_allow_html=True)
-
-st.markdown(
-    """
-    <style>
-    html, body, [data-testid="stAppViewContainer"] {
-        overflow-x: hidden;
-    }
-    .block-container {
-        max-width: 900px;
-        padding-top: 2rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-    }
-    .welcome-banner {
-        background: #0f766e;
-        border-radius: 8px;
-        color: #ffffff;
-        font-size: 1.08rem;
-        font-weight: 700;
-        line-height: 1.5;
-        padding: 1rem 1.1rem;
-        overflow-wrap: anywhere;
-    }
-    div[data-testid="stForm"] {
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-        padding: 1.5rem;
-        background: #ffffff;
-    }
-    [data-testid="stVerticalBlock"] {
-        gap: 0.45rem;
-    }
-    .stButton > button {
-        width: 100%;
-        border-radius: 6px;
-        font-weight: 600;
-    }
-    .stProgress > div > div > div > div {
-        background-color: #0f766e;
-    }
-    [data-testid="stMarkdownContainer"] {
-        overflow-wrap: anywhere;
-    }
-    @media (max-width: 640px) {
-        .block-container {
-            padding-left: 0.75rem;
-            padding-right: 0.75rem;
-        }
-        div[data-testid="stForm"] {
-            padding: 1rem;
-        }
-        h1 {
-            font-size: 2rem;
-        }
-        h2, h3 {
-            font-size: 1.25rem;
-        }
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
 current_page = st.session_state.get("page", "profile")
 
 if current_page == "profile":
-    show_profile_form()
+    show_profile_page()
 elif current_page == "quiz":
-    show_quiz()
+    show_quiz_page()
 else:
-    show_results()
-
-st.caption("Raahi MVP | Built for AtomCamp's Hackathon '26 | Data based on 2024-2025 admissions")
+    show_results_page()
