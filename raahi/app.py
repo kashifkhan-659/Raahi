@@ -9,6 +9,9 @@ from logic import matcher
 
 
 COMPASS_ICON = "\U0001f9ed"
+PROFILE_ICON = "\U0001f4dd"
+QUIZ_ICON = "\U0001f9e0"
+RESULTS_ICON = "\U0001f3af"
 RIGHT_ARROW = "\u2192"
 FIELDS_PATH = Path(__file__).resolve().parent / "data" / "fields.json"
 
@@ -183,6 +186,9 @@ def reset_app():
 
 
 def show_profile_form():
+    st.subheader(f"{PROFILE_ICON} Student Profile")
+    st.write("")
+
     with st.form("student_profile_form"):
         left_col, right_col = st.columns(2)
 
@@ -216,6 +222,7 @@ def show_profile_form():
                 default=["Any"],
             )
 
+        st.write("")
         submitted = st.form_submit_button(f"Find My Path {RIGHT_ARROW}")
 
     if submitted:
@@ -241,9 +248,11 @@ def show_quiz():
     total_questions = len(QUIZ_QUESTIONS)
     saved_answer = st.session_state["quiz_answers"].get(question_index, 0)
 
-    st.subheader("Personality quiz")
+    st.subheader(f"{QUIZ_ICON} Personality Quiz")
+    st.write("")
     st.progress((question_index + 1) / total_questions)
     st.caption(f"Question {question_index + 1} of {total_questions}")
+    st.write("")
 
     st.markdown(f"### {question_data['question']}")
     selected_option_index = st.radio(
@@ -255,6 +264,7 @@ def show_quiz():
         key=f"quiz_question_{question_index}",
     )
 
+    st.write("")
     back_col, next_col = st.columns([1, 2])
 
     with back_col:
@@ -297,8 +307,9 @@ def show_results():
             st.rerun()
         return
 
-    st.header(f"Your Raahi Results {COMPASS_ICON}")
+    st.header(f"{RESULTS_ICON} Your Raahi Results")
     st.caption("Based on your marks, budget, and thinking style")
+    st.write("")
 
     st.markdown(
         (
@@ -313,6 +324,7 @@ def show_results():
         unsafe_allow_html=True,
     )
 
+    st.write("")
     fields_data = load_fields_data()
 
     if "top_recommendations" not in st.session_state:
@@ -327,12 +339,17 @@ def show_results():
 
     recommendations = st.session_state.get("top_recommendations", [])
     if not recommendations:
-        st.info("No recommendations matched this profile yet. Try increasing the budget or choosing Any city.")
+        st.info(
+            "No recommendations matched this profile yet. Try increasing the budget "
+            "or choosing Any city."
+        )
     else:
+        st.write("")
         for index, result in enumerate(recommendations, start=1):
             field_data = get_field_data_for_result(result, fields_data)
             show_result_card(result.get("rank", index), result, field_data)
 
+    st.write("")
     if st.button("Start Over"):
         reset_app()
         st.rerun()
@@ -340,15 +357,37 @@ def show_results():
 
 initialize_state()
 
-st.title(f"Raahi {COMPASS_ICON}")
+with st.sidebar:
+    st.header(f"{COMPASS_ICON} About Raahi")
+    st.write(
+        "Raahi helps students compare realistic university paths using marks, "
+        "budget, city preference, and interests."
+    )
+    st.write("")
+    st.subheader(f"{QUIZ_ICON} How it works")
+    st.markdown(
+        """
+        - Enter your academic profile and budget.
+        - Answer a short interest quiz.
+        - Review your top matched university programs.
+        """
+    )
+
+st.title(f"{COMPASS_ICON} Raahi")
 st.caption("Find your realistic university path")
+st.write("")
 
 st.markdown(
     """
     <style>
+    html, body, [data-testid="stAppViewContainer"] {
+        overflow-x: hidden;
+    }
     .block-container {
-        max-width: 860px;
+        max-width: 900px;
         padding-top: 2rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
     }
     div[data-testid="stForm"] {
         border: 1px solid #e5e7eb;
@@ -356,10 +395,31 @@ st.markdown(
         padding: 1.5rem;
         background: #ffffff;
     }
+    [data-testid="stVerticalBlock"] {
+        gap: 0.45rem;
+    }
     .stButton > button {
         width: 100%;
         border-radius: 6px;
         font-weight: 600;
+    }
+    [data-testid="stMarkdownContainer"] {
+        overflow-wrap: anywhere;
+    }
+    @media (max-width: 640px) {
+        .block-container {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        div[data-testid="stForm"] {
+            padding: 1rem;
+        }
+        h1 {
+            font-size: 2rem;
+        }
+        h2, h3 {
+            font-size: 1.25rem;
+        }
     }
     </style>
     """,

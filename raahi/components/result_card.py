@@ -36,20 +36,22 @@ def show_result_card(rank, result, field_data):
     sector = str(result.get("sector", "Unknown")).title()
     ranking_tier = result.get("ranking_tier", "Unknown")
 
+    st.write("")
     with st.container(border=True):
-        header_left, header_right = st.columns([4, 1])
+        header_left, header_right = st.columns([4, 1], vertical_alignment="center")
         with header_left:
-            st.caption(f"Option #{rank} \u2014 {rank_emoji}")
+            st.caption(f"{rank_emoji} Option #{rank}")
             st.markdown(f"#### {escape(program_name)} at {escape(university_name)}")
-            st.caption(f"{city} • {sector} • Ranking Tier {ranking_tier}")
+            st.caption(f"{city} | {sector} | Ranking Tier {ranking_tier}")
         with header_right:
             total_score = result.get("total_score", 0)
             st.metric("Score", f"{total_score:g}")
 
+        st.write("")
         admission_col, budget_col = st.columns(2)
 
         with admission_col:
-            st.markdown("**Admission Status**")
+            st.markdown("**\U0001f393 Admission Status**")
             _show_badge(result.get("admission_label"), ADMISSION_BADGES)
             st.caption(
                 "Your FSc: "
@@ -58,32 +60,35 @@ def show_result_card(rank, result, field_data):
             )
 
         with budget_col:
-            st.markdown("**Budget Status**")
+            st.markdown("**\U0001f4b0 Budget Status**")
             st.write(f"Fees: PKR {_format_money(result.get('annual_fee_pkr'))}/year")
             _show_badge(result.get("budget_label"), BUDGET_BADGES)
 
+        st.write("")
         why_col, risk_col = st.columns(2)
 
         with why_col:
-            st.markdown("**Why This**")
+            st.markdown("**\u2728 Why This**")
             _show_bullet_list(result.get("why_list", []))
 
         risks = result.get("risk_list", [])
         if risks:
             with risk_col:
-                st.markdown("**Risks**")
+                st.markdown("**\u26a0\ufe0f Risks**")
                 for risk in risks[:2]:
                     st.markdown(
                         (
                             "<div style='color:#9a3412;background:#ffedd5;"
                             "border:1px solid #fdba74;border-radius:6px;"
-                            "padding:0.45rem 0.6rem;margin-bottom:0.35rem;'>"
+                            "padding:0.45rem 0.6rem;margin-bottom:0.35rem;"
+                            "overflow-wrap:anywhere;'>"
                             f"{escape(str(risk))}</div>"
                         ),
                         unsafe_allow_html=True,
                     )
 
-        st.markdown("**Salary Outlook**")
+        st.write("")
+        st.markdown("**\U0001f4bc Salary Outlook**")
         salary_col, demand_col = st.columns(2)
         with salary_col:
             st.write(
@@ -94,7 +99,8 @@ def show_result_card(rank, result, field_data):
         with demand_col:
             st.write(f"Market Demand: {field_data.get('demand', 'Unknown')}")
 
-        with st.expander("What graduates actually do \U0001f447"):
+        st.write("")
+        with st.expander("\U0001f447 What graduates actually do"):
             jobs = field_data.get("jobs_after_3_years", [])
             if jobs:
                 _show_bullet_list(jobs)
@@ -107,7 +113,7 @@ def show_result_card(rank, result, field_data):
             if growth_outlook:
                 st.caption(f"Growth outlook: {growth_outlook}")
 
-    st.divider()
+    st.write("")
 
 
 def _show_badge(label, badge_map):
@@ -119,7 +125,8 @@ def _show_badge(label, badge_map):
         (
             "<span style='display:inline-block;padding:0.25rem 0.6rem;"
             f"border-radius:999px;background:{bg_color};color:{text_color};"
-            f"border:1px solid {border_color};font-weight:700;font-size:0.9rem;'>"
+            f"border:1px solid {border_color};font-weight:700;font-size:0.9rem;"
+            "white-space:normal;overflow-wrap:anywhere;'>"
             f"{escape(badge_text)}</span>"
         ),
         unsafe_allow_html=True,
