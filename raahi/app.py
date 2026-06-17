@@ -12,7 +12,11 @@ COMPASS_ICON = "\U0001f9ed"
 PROFILE_ICON = "\U0001f4dd"
 QUIZ_ICON = "\U0001f9e0"
 RESULTS_ICON = "\U0001f3af"
+CITY_ICON = "\U0001f3d9\ufe0f"
+LOCATION_ICON = "\U0001f4cd"
+PERSON_ICON = "\U0001f464"
 RIGHT_ARROW = "\u2192"
+LEFT_ARROW = "\u2190"
 FIELDS_PATH = Path(__file__).resolve().parent / "data" / "fields.json"
 
 st.set_page_config(page_title="Raahi", page_icon=COMPASS_ICON, layout="wide")
@@ -138,12 +142,21 @@ QUIZ_QUESTIONS = [
 
 
 def initialize_state():
+    if "page" not in st.session_state:
+        st.session_state["page"] = st.session_state.get("app_section", "profile")
     if "app_section" not in st.session_state:
-        st.session_state["app_section"] = "profile"
+        st.session_state["app_section"] = st.session_state["page"]
+    else:
+        st.session_state["app_section"] = st.session_state["page"]
     if "quiz_question_index" not in st.session_state:
         st.session_state["quiz_question_index"] = 0
     if "quiz_answers" not in st.session_state:
         st.session_state["quiz_answers"] = {}
+
+
+def set_page(page):
+    st.session_state["page"] = page
+    st.session_state["app_section"] = page
 
 
 def calculate_field_scores(answers):
@@ -186,44 +199,69 @@ def reset_app():
 
 
 def show_profile_form():
-    st.subheader(f"{PROFILE_ICON} Student Profile")
-    st.write("")
+    st.markdown(
+        (
+            "<div class='welcome-banner'>"
+            f"{COMPASS_ICON} Welcome to Raahi \u2014 Find your realistic university "
+            "path in Pakistan"
+            "</div>"
+        ),
+        unsafe_allow_html=True,
+    )
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown(f"## {PROFILE_ICON} Student Profile")
+    st.markdown("<br>", unsafe_allow_html=True)
 
     with st.form("student_profile_form"):
-        left_col, right_col = st.columns(2)
+        academic_col, budget_col = st.columns(2)
 
-        with left_col:
+        with academic_col:
             fsc_percentage = st.number_input(
-                "FSc percentage",
+                "\U0001f4ca Your FSc Percentage",
                 min_value=40.0,
                 max_value=100.0,
                 value=75.0,
                 step=0.5,
             )
-            home_city = st.selectbox("Home city", CITIES)
-            gender = st.radio(
-                "Gender",
-                ["Male", "Female", "Prefer not to say"],
-                horizontal=True,
-            )
 
-        with right_col:
+        with budget_col:
             annual_budget_pkr = st.slider(
-                "Annual budget in PKR",
+                "\U0001f4b0 Annual Budget (PKR)",
                 min_value=50000,
                 max_value=800000,
                 value=300000,
                 step=25000,
-                format="%d",
+                format="PKR %d",
             )
+            st.caption(f"PKR {annual_budget_pkr:,}/year")
+
+        st.markdown("---")
+
+        city_col, preference_col = st.columns(2)
+
+        with city_col:
+            home_city = st.selectbox(f"{CITY_ICON} Your Home City", CITIES)
+
+        with preference_col:
             preferred_study_cities = st.multiselect(
-                "Preferred study cities",
+                f"{LOCATION_ICON} Preferred Study Cities",
                 STUDY_CITY_OPTIONS,
                 default=["Any"],
             )
 
-        st.write("")
-        submitted = st.form_submit_button(f"Find My Path {RIGHT_ARROW}")
+        st.markdown("---")
+
+        gender = st.radio(
+            f"{PERSON_ICON} Gender",
+            ["Male", "Female", "Prefer not to say"],
+            horizontal=True,
+        )
+
+        st.markdown("<br>", unsafe_allow_html=True)
+        submitted = st.form_submit_button(
+            f"Find My Path {RIGHT_ARROW}",
+            use_container_width=True,
+        )
 
     if submitted:
         with st.spinner("Calculating your path..."):
@@ -236,7 +274,7 @@ def show_profile_form():
             "preferred_study_cities": preferred_study_cities,
             "gender": gender,
         }
-        st.session_state["app_section"] = "quiz"
+        set_page("quiz")
         st.session_state["quiz_question_index"] = 0
         st.session_state["quiz_answers"] = {}
         st.rerun()
@@ -248,11 +286,17 @@ def show_quiz():
     total_questions = len(QUIZ_QUESTIONS)
     saved_answer = st.session_state["quiz_answers"].get(question_index, 0)
 
-    st.subheader(f"{QUIZ_ICON} Personality Quiz")
-    st.write("")
+    st.markdown(f"## {QUIZ_ICON} Personality Quiz")
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    if st.button(f"{LEFT_ARROW} Back", key="back_to_profile"):
+        set_page("profile")
+        st.rerun()
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown(f"**Question {question_index + 1} of {total_questions}**")
     st.progress((question_index + 1) / total_questions)
-    st.caption(f"Question {question_index + 1} of {total_questions}")
-    st.write("")
+    st.markdown("<br>", unsafe_allow_html=True)
 
     st.markdown(f"### {question_data['question']}")
     selected_option_index = st.radio(
@@ -264,13 +308,21 @@ def show_quiz():
         key=f"quiz_question_{question_index}",
     )
 
-    st.write("")
+    st.markdown("<br>", unsafe_allow_html=True)
     back_col, next_col = st.columns([1, 2])
 
     with back_col:
-        if question_index > 0 and st.button("Back"):
+        previous_clicked = st.button(
+            f"{LEFT_ARROW} Back",
+            key=f"previous_question_{question_index}",
+            use_container_width=True,
+        )
+        if previous_clicked and question_index > 0:
             st.session_state["quiz_answers"][question_index] = selected_option_index
             st.session_state["quiz_question_index"] -= 1
+            st.rerun()
+        if previous_clicked and question_index == 0:
+            set_page("profile")
             st.rerun()
 
     with next_col:
@@ -281,7 +333,7 @@ def show_quiz():
             else f"Next Question {RIGHT_ARROW}"
         )
 
-        if st.button(button_label, type="primary"):
+        if st.button(button_label, type="primary", use_container_width=True):
             st.session_state["quiz_answers"][question_index] = selected_option_index
 
             if is_last_question:
@@ -289,7 +341,7 @@ def show_quiz():
                     st.session_state["quiz_answers"]
                 )
                 st.session_state.pop("top_recommendations", None)
-                st.session_state["app_section"] = "results"
+                set_page("results")
             else:
                 st.session_state["quiz_question_index"] += 1
 
@@ -307,15 +359,15 @@ def show_results():
             st.rerun()
         return
 
-    st.header(f"{RESULTS_ICON} Your Raahi Results")
+    st.markdown(f"## {RESULTS_ICON} Your Raahi Results")
     st.caption("Based on your marks, budget, and thinking style")
-    st.write("")
+    st.markdown("<br>", unsafe_allow_html=True)
 
     st.markdown(
         (
             "<div style='border:1px solid #e5e7eb;border-radius:8px;"
             "padding:0.8rem 1rem;margin:1rem 0;background:#f9fafb;"
-            "font-weight:600;'>"
+            "font-weight:600;overflow-wrap:anywhere;'>"
             f"FSc: {profile['fsc_percentage']:.1f}% | "
             f"Budget: PKR {profile['annual_budget_pkr']:,}/year | "
             f"Top Interest: {get_top_interest(scores)}"
@@ -324,7 +376,7 @@ def show_results():
         unsafe_allow_html=True,
     )
 
-    st.write("")
+    st.markdown("<br>", unsafe_allow_html=True)
     fields_data = load_fields_data()
 
     if "top_recommendations" not in st.session_state:
@@ -344,13 +396,13 @@ def show_results():
             "or choosing Any city."
         )
     else:
-        st.write("")
+        st.markdown("<br>", unsafe_allow_html=True)
         for index, result in enumerate(recommendations, start=1):
             field_data = get_field_data_for_result(result, fields_data)
             show_result_card(result.get("rank", index), result, field_data)
 
-    st.write("")
-    if st.button("Start Over"):
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("Start Over", use_container_width=True):
         reset_app()
         st.rerun()
 
@@ -358,13 +410,13 @@ def show_results():
 initialize_state()
 
 with st.sidebar:
-    st.header(f"{COMPASS_ICON} About Raahi")
+    st.markdown(f"## {COMPASS_ICON} About Raahi")
     st.write(
         "Raahi helps students compare realistic university paths using marks, "
         "budget, city preference, and interests."
     )
-    st.write("")
-    st.subheader(f"{QUIZ_ICON} How it works")
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown(f"### {QUIZ_ICON} How it works")
     st.markdown(
         """
         - Enter your academic profile and budget.
@@ -372,10 +424,12 @@ with st.sidebar:
         - Review your top matched university programs.
         """
     )
+    st.markdown("---")
+    st.caption("Built by Team Raahi | AtomCamp Hackathon '26")
 
 st.title(f"{COMPASS_ICON} Raahi")
 st.caption("Find your realistic university path")
-st.write("")
+st.markdown("<br>", unsafe_allow_html=True)
 
 st.markdown(
     """
@@ -388,6 +442,16 @@ st.markdown(
         padding-top: 2rem;
         padding-left: 1rem;
         padding-right: 1rem;
+    }
+    .welcome-banner {
+        background: #0f766e;
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 1.08rem;
+        font-weight: 700;
+        line-height: 1.5;
+        padding: 1rem 1.1rem;
+        overflow-wrap: anywhere;
     }
     div[data-testid="stForm"] {
         border: 1px solid #e5e7eb;
@@ -402,6 +466,9 @@ st.markdown(
         width: 100%;
         border-radius: 6px;
         font-weight: 600;
+    }
+    .stProgress > div > div > div > div {
+        background-color: #0f766e;
     }
     [data-testid="stMarkdownContainer"] {
         overflow-wrap: anywhere;
@@ -426,9 +493,11 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-if st.session_state["app_section"] == "profile":
+current_page = st.session_state.get("page", "profile")
+
+if current_page == "profile":
     show_profile_form()
-elif st.session_state["app_section"] == "quiz":
+elif current_page == "quiz":
     show_quiz()
 else:
     show_results()

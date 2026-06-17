@@ -36,7 +36,7 @@ def show_result_card(rank, result, field_data):
     sector = str(result.get("sector", "Unknown")).title()
     ranking_tier = result.get("ranking_tier", "Unknown")
 
-    st.write("")
+    st.markdown("<br>", unsafe_allow_html=True)
     with st.container(border=True):
         header_left, header_right = st.columns([4, 1], vertical_alignment="center")
         with header_left:
@@ -47,7 +47,7 @@ def show_result_card(rank, result, field_data):
             total_score = result.get("total_score", 0)
             st.metric("Score", f"{total_score:g}")
 
-        st.write("")
+        st.markdown("<br>", unsafe_allow_html=True)
         admission_col, budget_col = st.columns(2)
 
         with admission_col:
@@ -64,7 +64,7 @@ def show_result_card(rank, result, field_data):
             st.write(f"Fees: PKR {_format_money(result.get('annual_fee_pkr'))}/year")
             _show_badge(result.get("budget_label"), BUDGET_BADGES)
 
-        st.write("")
+        st.markdown("<br>", unsafe_allow_html=True)
         why_col, risk_col = st.columns(2)
 
         with why_col:
@@ -87,7 +87,7 @@ def show_result_card(rank, result, field_data):
                         unsafe_allow_html=True,
                     )
 
-        st.write("")
+        st.markdown("<br>", unsafe_allow_html=True)
         st.markdown("**\U0001f4bc Salary Outlook**")
         salary_col, demand_col = st.columns(2)
         with salary_col:
@@ -99,7 +99,7 @@ def show_result_card(rank, result, field_data):
         with demand_col:
             st.write(f"Market Demand: {field_data.get('demand', 'Unknown')}")
 
-        st.write("")
+        st.markdown("<br>", unsafe_allow_html=True)
         with st.expander("\U0001f447 What graduates actually do"):
             jobs = field_data.get("jobs_after_3_years", [])
             if jobs:
@@ -113,7 +113,7 @@ def show_result_card(rank, result, field_data):
             if growth_outlook:
                 st.caption(f"Growth outlook: {growth_outlook}")
 
-    st.write("")
+    st.markdown("<br>", unsafe_allow_html=True)
 
 
 def _show_badge(label, badge_map):
