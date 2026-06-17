@@ -1,92 +1,585 @@
 import json
+from html import escape
 from pathlib import Path
 
 import streamlit as st
 
-from components.result_card import show_result_card
 from logic import matcher
 
 
 COMPASS_ICON = "\U0001f9ed"
-ACADEMIC_ICON = "\U0001f4ca"
-BUDGET_ICON = "\U0001f4b0"
-CITY_ICON = "\U0001f3d9\ufe0f"
-LOCATION_ICON = "\U0001f4cd"
-PERSON_ICON = "\U0001f464"
 RIGHT_ARROW = "\u2192"
 LEFT_ARROW = "\u2190"
 MIDDLE_DOT = "\u00b7"
 FIELDS_PATH = Path(__file__).resolve().parent / "data" / "fields.json"
 
-st.set_page_config(page_title="Raahi", page_icon="🧭", layout="centered")
+st.set_page_config(page_title="Raahi", page_icon=COMPASS_ICON, layout="wide")
 
 st.markdown(
     """
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
     :root {
-        --raahi-teal: #0F6E56;
-        --raahi-border: #E5E7EB;
-        --raahi-muted: #64748B;
-        --raahi-bg: #F8FAFC;
+        --background: #111415;
+        --surface: #111415;
+        --surface-container-lowest: #0c0f10;
+        --surface-container-low: #191c1d;
+        --surface-container: #1d2021;
+        --surface-container-high: #282a2b;
+        --surface-container-highest: #323536;
+        --surface-bright: #373a3b;
+        --surface-variant: #323536;
+        --primary: #62dbb7;
+        --primary-container: #15a382;
+        --primary-fixed-dim: #62dbb7;
+        --on-primary: #00382b;
+        --on-primary-container: #003025;
+        --on-background: #e1e3e4;
+        --on-surface: #e1e3e4;
+        --on-surface-variant: #bccac3;
+        --outline: #86948d;
+        --outline-variant: #3d4944;
+        --error: #ffb4ab;
+        --error-container: #93000a;
+        --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
     }
 
     html, body, [data-testid="stAppViewContainer"] {
-        background: var(--raahi-bg);
+        background: var(--background);
+        color: var(--on-background);
+        font-family: Inter, sans-serif;
         overflow-x: hidden;
     }
 
     .main .block-container {
-        max-width: 680px;
-        margin: 0 auto;
-        padding: 2rem 1rem 3rem;
+        max-width: 800px;
+        margin-left: max(272px, calc(50vw - 272px));
+        margin-right: max(16px, calc(50vw - 528px));
+        padding: 2rem 1rem 6rem;
     }
 
-    [data-testid="stForm"],
-    [data-testid="stVerticalBlockBorderWrapper"] {
-        background: #FFFFFF;
-        border: 1px solid var(--raahi-border);
-        border-radius: 8px;
-    }
-
-    h1, h2, h3 {
-        color: #0F172A;
-        letter-spacing: 0;
-    }
-
-    .stButton > button {
-        border-radius: 6px;
-        font-weight: 700;
-    }
-
-    .stButton > button[kind="primary"] {
-        background: var(--raahi-teal);
-        border-color: var(--raahi-teal);
-    }
-
-    .stProgress > div > div > div > div {
-        background-color: var(--raahi-teal);
-    }
-
-    [data-testid="stAlert"] {
-        background: #E7F5F1;
-        border: 1px solid #B7DED3;
-        border-radius: 8px;
-        color: #123D33;
-    }
-
-    [data-testid="stMarkdownContainer"],
-    [data-testid="stCaptionContainer"] {
-        overflow-wrap: anywhere;
-    }
-
+    header[data-testid="stHeader"],
     section[data-testid="stSidebar"] {
         display: none;
     }
 
-    @media (max-width: 640px) {
+    h1, h2, h3, h4, p, label, span, div {
+        font-family: Inter, sans-serif;
+    }
+
+    h1 {
+        color: var(--primary);
+        font-size: 48px;
+        line-height: 56px;
+        letter-spacing: 0;
+        font-weight: 700;
+    }
+
+    h2 {
+        color: var(--on-surface);
+        font-size: 32px;
+        line-height: 40px;
+        letter-spacing: 0;
+        font-weight: 600;
+    }
+
+    h3 {
+        color: var(--on-surface);
+        font-size: 20px;
+        line-height: 28px;
+        letter-spacing: 0;
+        font-weight: 500;
+    }
+
+    .stCaptionContainer,
+    [data-testid="stCaptionContainer"] {
+        color: var(--on-surface-variant);
+    }
+
+    .raahi-shell {
+        display: flex;
+        gap: 0;
+        min-height: 100vh;
+    }
+
+    .raahi-side-nav {
+        position: fixed;
+        inset: 0 auto 0 0;
+        width: 256px;
+        background: var(--surface);
+        border-right: 1px solid var(--outline-variant);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        z-index: 1;
+    }
+
+    .raahi-brand {
+        border-bottom: 1px solid var(--surface-container-low);
+        padding-bottom: 24px;
+        margin-bottom: 12px;
+    }
+
+    .raahi-brand-title {
+        color: var(--primary);
+        font-size: 32px;
+        line-height: 40px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .raahi-brand-subtitle {
+        color: var(--on-surface-variant);
+        font-size: 14px;
+        line-height: 20px;
+        margin: 4px 0 0;
+    }
+
+    .raahi-nav-item {
+        align-items: center;
+        border-radius: 16px;
+        color: var(--on-surface-variant);
+        display: flex;
+        gap: 16px;
+        padding: 12px 16px;
+        font-size: 20px;
+        line-height: 28px;
+        font-weight: 500;
+    }
+
+    .raahi-nav-item.active {
+        background: var(--surface-container-high);
+        color: var(--primary);
+    }
+
+    .raahi-user {
+        align-items: center;
+        display: flex;
+        gap: 16px;
+        margin-top: auto;
+    }
+
+    .raahi-avatar {
+        align-items: center;
+        background: var(--surface-container-highest);
+        border: 1px solid var(--outline-variant);
+        border-radius: 999px;
+        display: flex;
+        height: 40px;
+        justify-content: center;
+        width: 40px;
+    }
+
+    .raahi-main {
+        margin-left: 256px;
+    }
+
+    .mobile-topbar {
+        display: none;
+    }
+
+    .step-dots {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin: 0 0 24px;
+    }
+
+    .step-dot {
+        background: var(--surface-variant);
+        border-radius: 999px;
+        height: 8px;
+        width: 8px;
+    }
+
+    .step-dot.active {
+        background: var(--primary);
+        width: 32px;
+    }
+
+    .step-dot.done {
+        background: var(--primary);
+        opacity: 0.55;
+        width: 16px;
+    }
+
+    .stProgress > div > div > div > div {
+        background-color: var(--primary);
+    }
+
+    .banner-card {
+        align-items: flex-start;
+        background: var(--primary-container);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 32px;
+        box-shadow: var(--shadow-lg);
+        color: var(--on-primary-container);
+        display: flex;
+        gap: 16px;
+        margin-bottom: 40px;
+        padding: 24px;
+    }
+
+    .banner-icon {
+        align-items: center;
+        background: rgba(255, 255, 255, 0.16);
+        border-radius: 999px;
+        display: flex;
+        flex-shrink: 0;
+        height: 40px;
+        justify-content: center;
+        width: 40px;
+    }
+
+    .banner-card h2 {
+        color: var(--on-primary-container);
+        font-size: 20px;
+        line-height: 28px;
+        margin: 0 0 8px;
+    }
+
+    .banner-card p {
+        color: rgba(0, 48, 37, 0.82);
+        font-size: 14px;
+        line-height: 20px;
+        margin: 0;
+    }
+
+    .section-card,
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        background: var(--surface-container);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 32px;
+        padding: 24px;
+    }
+
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        box-shadow: var(--shadow-lg);
+    }
+
+    .section-title {
+        color: var(--on-surface-variant);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        line-height: 16px;
+        margin: 0 0 16px;
+        text-transform: uppercase;
+    }
+
+    .quiz-card {
+        background: var(--surface-bright);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 48px;
+        box-shadow: var(--shadow-lg);
+        margin: 24px 0;
+        padding: 40px 24px;
+    }
+
+    .quiz-card h2 {
+        margin-bottom: 40px;
+        text-align: center;
+    }
+
+    .summary-bar {
+        align-items: center;
+        background: var(--surface-container-low);
+        border: 1px solid var(--outline-variant);
+        border-radius: 32px;
+        color: var(--on-surface-variant);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        justify-content: space-between;
+        margin-bottom: 24px;
+        padding: 12px;
+    }
+
+    .results-title {
+        align-items: center;
+        border-bottom: 1px solid var(--surface-container-high);
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+        padding-bottom: 12px;
+    }
+
+    .results-title h2 {
+        margin: 0;
+    }
+
+    .result-card {
+        background: var(--surface-container);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 48px;
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 16px;
+        overflow: hidden;
+        padding: 24px;
+        position: relative;
+    }
+
+    .result-card.best {
+        background: var(--surface-bright);
+    }
+
+    .result-badge {
+        background: var(--primary-container);
+        border-bottom-left-radius: 16px;
+        color: var(--on-primary-container);
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 16px;
+        padding: 6px 12px;
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+
+    .result-head {
+        align-items: flex-start;
+        display: flex;
+        gap: 16px;
+        margin-bottom: 16px;
+        padding-right: 110px;
+    }
+
+    .medal {
+        align-items: center;
+        border-radius: 999px;
+        display: flex;
+        flex-shrink: 0;
+        height: 48px;
+        justify-content: center;
+        width: 48px;
+    }
+
+    .medal.gold {
+        background: rgba(255, 215, 0, 0.16);
+        border: 1px solid rgba(255, 215, 0, 0.45);
+        color: #FFD700;
+    }
+
+    .medal.silver {
+        background: rgba(192, 192, 192, 0.16);
+        border: 1px solid rgba(192, 192, 192, 0.45);
+        color: #C0C0C0;
+    }
+
+    .medal.bronze {
+        background: rgba(205, 127, 50, 0.16);
+        border: 1px solid rgba(205, 127, 50, 0.45);
+        color: #CD7F32;
+    }
+
+    .result-card h3 {
+        color: var(--on-surface);
+        margin: 0 0 4px;
+    }
+
+    .result-card p {
+        color: var(--on-surface-variant);
+        font-size: 14px;
+        line-height: 20px;
+        margin: 0;
+    }
+
+    .pill-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 12px 0;
+    }
+
+    .info-pill {
+        align-items: center;
+        background: var(--surface-container);
+        border: 1px solid var(--outline-variant);
+        border-radius: 999px;
+        color: var(--on-surface-variant);
+        display: inline-flex;
+        font-size: 12px;
+        font-weight: 600;
+        gap: 6px;
+        line-height: 16px;
+        padding: 6px 12px;
+    }
+
+    .danger-pill {
+        background: rgba(255, 180, 171, 0.10);
+        border-color: rgba(255, 180, 171, 0.30);
+        color: var(--error);
+    }
+
+    .mini-heading {
+        color: var(--on-surface);
+        font-size: 14px;
+        font-weight: 700;
+        margin: 16px 0 8px;
+    }
+
+    ul.raahi-list {
+        color: var(--on-surface-variant);
+        font-size: 14px;
+        line-height: 20px;
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .stTextInput input,
+    .stNumberInput input,
+    .stSelectbox div[data-baseweb="select"] > div,
+    .stMultiSelect div[data-baseweb="select"] > div {
+        background: var(--background);
+        border-color: var(--outline-variant);
+        border-radius: 12px;
+        color: var(--on-surface);
+    }
+
+    label,
+    .stRadio label,
+    .stSlider label,
+    .stSelectbox label,
+    .stMultiSelect label,
+    .stNumberInput label {
+        color: var(--on-surface);
+    }
+
+    .stSlider [data-testid="stTickBar"] {
+        color: var(--on-surface-variant);
+    }
+
+    .stButton > button {
+        border-color: var(--outline-variant);
+        border-radius: 16px;
+        color: var(--on-surface-variant);
+        font-size: 20px;
+        font-weight: 500;
+        line-height: 28px;
+        padding: 10px 24px;
+    }
+
+    .stButton > button[kind="primary"] {
+        background: var(--primary);
+        border-color: var(--primary);
+        box-shadow: var(--shadow-lg);
+        color: #0a0a0a;
+    }
+
+    .stRadio div[role="radiogroup"] {
+        gap: 8px;
+    }
+
+    .stRadio div[role="radiogroup"] label {
+        background: var(--surface-variant);
+        border: 1px solid var(--outline-variant);
+        border-radius: 16px;
+        padding: 10px 14px;
+    }
+
+    .stRadio div[role="radiogroup"] label:has(input:checked) {
+        background: rgba(98, 219, 183, 0.12);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+
+    div[data-testid="stExpander"] {
+        background: var(--surface-container-low);
+        border: 1px solid var(--outline-variant);
+        border-radius: 16px;
+        color: var(--on-surface);
+    }
+
+    .mobile-bottom-nav {
+        display: none;
+    }
+
+    @media (max-width: 900px) {
+        .raahi-side-nav {
+            display: none;
+        }
+
+        .raahi-main {
+            margin-left: 0;
+        }
+
+        .mobile-topbar {
+            align-items: center;
+            background: var(--background);
+            border-bottom: 1px solid var(--outline-variant);
+            display: flex;
+            justify-content: space-between;
+            margin: -2rem -1rem 24px;
+            padding: 12px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .mobile-bottom-nav {
+            align-items: center;
+            background: var(--surface-container);
+            border-top: 1px solid var(--outline-variant);
+            border-top-left-radius: 32px;
+            border-top-right-radius: 32px;
+            bottom: 0;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            justify-content: space-around;
+            left: 0;
+            padding: 8px 16px;
+            position: fixed;
+            right: 0;
+            z-index: 10;
+        }
+
+        .mobile-nav-item {
+            color: var(--on-surface-variant);
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 16px;
+            padding: 8px 14px;
+            text-align: center;
+        }
+
+        .mobile-nav-item.active {
+            background: var(--primary-container);
+            border-radius: 24px;
+            color: var(--on-primary-container);
+        }
+
+        h1 {
+            font-size: 32px;
+            line-height: 40px;
+        }
+
         .main .block-container {
-            padding-left: 0.75rem;
-            padding-right: 0.75rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h2 {
+            font-size: 24px;
+            line-height: 32px;
+        }
+
+        .quiz-card,
+        .result-card {
+            border-radius: 32px;
+        }
+
+        .result-head {
+            padding-right: 0;
+        }
+
+        .result-badge {
+            position: static;
+            display: inline-block;
+            margin-bottom: 16px;
+            border-radius: 16px;
         }
     }
     </style>
@@ -225,22 +718,35 @@ QUIZ_QUESTIONS = [
 
 
 def initialize_state():
-    if "page" not in st.session_state:
-        st.session_state["page"] = "profile"
-    if "quiz_question_index" not in st.session_state:
-        st.session_state["quiz_question_index"] = 0
-    if "quiz_answers" not in st.session_state:
-        st.session_state["quiz_answers"] = {}
+    defaults = {
+        "current_page": "profile",
+        "fsc": 75.0,
+        "budget": 300000,
+        "city": "Rawalpindi",
+        "preferred_cities": ["Any"],
+        "gender": "Prefer not to say",
+        "personality_scores": {},
+        "quiz_question_index": 0,
+        "quiz_answers": {},
+    }
+
+    for key, value in defaults.items():
+        if key not in st.session_state:
+            st.session_state[key] = value
 
 
 def set_page(page):
-    st.session_state["page"] = page
+    st.session_state["current_page"] = page
 
 
-def show_step(progress_value, label):
-    st.progress(progress_value)
-    st.caption(label)
-    st.markdown("<br>", unsafe_allow_html=True)
+def current_profile():
+    return {
+        "fsc_percentage": st.session_state["fsc"],
+        "home_city": st.session_state["city"],
+        "annual_budget_pkr": st.session_state["budget"],
+        "preferred_study_cities": st.session_state["preferred_cities"],
+        "gender": st.session_state["gender"],
+    }
 
 
 def calculate_field_scores(answers):
@@ -282,71 +788,160 @@ def reset_app():
         del st.session_state[key]
 
 
-def show_profile_page():
-    profile = st.session_state.get("student_profile", {})
-    default_city = profile.get("home_city", "Islamabad")
-    default_gender = profile.get("gender", "Prefer not to say")
-    preferred_default = profile.get("preferred_study_cities", ["Any"])
-
-    st.title("🧭 Raahi")
-    st.caption("University guidance for Pakistani students")
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    show_step(0.33, "Step 1 of 3 \u2014 Your Profile")
-
-    st.info(
-        "Answer a few questions and Raahi will find your 3 most realistic "
-        "university paths \u2014 based on your marks, budget, and how you think."
+def render_shell_start(active_page):
+    nav_items = [
+        ("profile", "Profile", "person"),
+        ("quiz", "Quiz", "quiz"),
+        ("results", "Results", "workspace_premium"),
+    ]
+    nav_html = "".join(
+        (
+            f"<div class='raahi-nav-item {'active' if active_page == page else ''}'>"
+            f"<span>{icon}</span><span>{label}</span></div>"
+        )
+        for page, label, icon in nav_items
     )
-    st.markdown("<br>", unsafe_allow_html=True)
+    mobile_nav_html = "".join(
+        (
+            f"<div class='mobile-nav-item {'active' if active_page == page else ''}'>"
+            f"<div>{icon}</div><div>{label}</div></div>"
+        )
+        for page, label, icon in nav_items
+    )
+
+    st.markdown(
+        f"""
+        <div class="raahi-shell">
+            <nav class="raahi-side-nav" aria-label="Main Navigation">
+                <div class="raahi-brand">
+                    <p class="raahi-brand-title">{COMPASS_ICON} Raahi</p>
+                    <p class="raahi-brand-subtitle">University Guidance</p>
+                </div>
+                <div>{nav_html}</div>
+                <div class="raahi-user">
+                    <div class="raahi-avatar">person</div>
+                    <div>
+                        <p style="margin:0;color:var(--on-surface);font-weight:500;">Student</p>
+                        <p style="margin:0;color:var(--on-surface-variant);font-size:12px;">Guest User</p>
+                    </div>
+                </div>
+            </nav>
+            <main class="raahi-main">
+                <header class="mobile-topbar">
+                    <div style="color:var(--primary);font-size:24px;font-weight:700;">{COMPASS_ICON} Raahi</div>
+                    <div style="color:var(--on-surface-variant);">account_circle</div>
+                </header>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.session_state["_mobile_nav_html"] = mobile_nav_html
+
+
+def render_shell_end():
+    mobile_nav_html = st.session_state.get("_mobile_nav_html", "")
+    st.markdown(
+        f"""
+            </main>
+        </div>
+        <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
+            {mobile_nav_html}
+        </nav>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_step_indicator(active_step):
+    dots = []
+    for step in range(1, 4):
+        class_name = "step-dot"
+        if step == active_step:
+            class_name += " active"
+        elif step < active_step:
+            class_name += " done"
+        dots.append(f"<div class='{class_name}' aria-label='Step {step}'></div>")
+
+    st.markdown(
+        f"<div class='step-dots'>{''.join(dots)}</div>",
+        unsafe_allow_html=True,
+    )
+
+
+def render_profile_page():
+    render_shell_start("profile")
+
+    st.title(f"{COMPASS_ICON} Raahi")
+    st.caption("University guidance for Pakistani students")
+    render_step_indicator(1)
+
+    st.markdown(
+        """
+        <div class="banner-card">
+            <div class="banner-icon">map</div>
+            <div>
+                <h2>Find Your Academic Path</h2>
+                <p>Tell us about your background and preferences so we can tailor our university recommendations to your needs.</p>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     with st.container(border=True):
-        st.subheader(f"{ACADEMIC_ICON} Academic info")
+        st.markdown("<p class='section-title'>Academic Info</p>", unsafe_allow_html=True)
         fsc_col, city_col = st.columns(2)
-
         with fsc_col:
             fsc = st.number_input(
-                "FSc Percentage",
+                "FSc Percentage (%)",
                 min_value=40.0,
                 max_value=100.0,
-                value=float(profile.get("fsc_percentage", 75.0)),
+                value=float(st.session_state["fsc"]),
                 step=0.5,
             )
-
         with city_col:
             city = st.selectbox(
-                f"{CITY_ICON} Home City",
+                "Home City",
                 CITIES,
-                index=CITIES.index(default_city) if default_city in CITIES else 0,
+                index=CITIES.index(st.session_state["city"])
+                if st.session_state["city"] in CITIES
+                else 0,
             )
 
     st.markdown("<br>", unsafe_allow_html=True)
     with st.container(border=True):
-        st.subheader(f"{BUDGET_ICON} Annual Budget")
+        st.markdown("<p class='section-title'>Budget</p>", unsafe_allow_html=True)
         budget = st.slider(
-            "",
+            "Annual Budget",
             min_value=50000,
             max_value=800000,
-            value=int(profile.get("annual_budget_pkr", 300000)),
+            value=int(st.session_state["budget"]),
             step=25000,
+            label_visibility="collapsed",
         )
-        st.caption(f"PKR {budget:,} per year")
+        st.markdown(
+            f"<p style='color:var(--primary);font-size:24px;font-weight:700;text-align:center;margin:0;'>PKR {budget:,} / year</p>",
+            unsafe_allow_html=True,
+        )
 
     st.markdown("<br>", unsafe_allow_html=True)
     with st.container(border=True):
-        st.subheader(f"{LOCATION_ICON} Preferences")
+        st.markdown("<p class='section-title'>Preferences</p>", unsafe_allow_html=True)
         preferred_cities = st.multiselect(
-            "Preferred study cities",
+            "Preferred Cities",
             STUDY_CITY_OPTIONS,
-            default=[city for city in preferred_default if city in STUDY_CITY_OPTIONS]
+            default=[
+                city_name
+                for city_name in st.session_state["preferred_cities"]
+                if city_name in STUDY_CITY_OPTIONS
+            ]
             or ["Any"],
         )
         gender = st.radio(
-            f"{PERSON_ICON} Gender (optional \u2014 affects hostel info)",
-            ["Male", "Female", "Prefer not to say"],
+            "Gender",
+            ["Female", "Male", "Prefer not to say"],
             index=(
-                ["Male", "Female", "Prefer not to say"].index(default_gender)
-                if default_gender in ["Male", "Female", "Prefer not to say"]
+                ["Female", "Male", "Prefer not to say"].index(st.session_state["gender"])
+                if st.session_state["gender"] in ["Female", "Male", "Prefer not to say"]
                 else 2
             ),
             horizontal=True,
@@ -354,104 +949,212 @@ def show_profile_page():
 
     st.markdown("<br>", unsafe_allow_html=True)
     if st.button(
-        f"Next {RIGHT_ARROW} Personality Quiz",
+        f"Next \u2014 Personality Quiz {RIGHT_ARROW}",
         use_container_width=True,
         type="primary",
     ):
-        st.session_state["student_profile"] = {
-            "fsc_percentage": fsc,
-            "home_city": city,
-            "annual_budget_pkr": budget,
-            "preferred_study_cities": preferred_cities,
-            "gender": gender,
-        }
+        st.session_state["fsc"] = fsc
+        st.session_state["budget"] = budget
+        st.session_state["city"] = city
+        st.session_state["preferred_cities"] = preferred_cities
+        st.session_state["gender"] = gender
         st.session_state["quiz_question_index"] = 0
         st.session_state["quiz_answers"] = {}
-        st.session_state.pop("field_scores", None)
+        st.session_state["personality_scores"] = {}
         st.session_state.pop("top_recommendations", None)
         set_page("quiz")
         st.rerun()
 
+    render_shell_end()
 
-def show_quiz_page():
+
+def render_quiz_page():
+    render_shell_start("quiz")
+    render_step_indicator(2)
+
     question_index = st.session_state["quiz_question_index"]
-    question_data = QUIZ_QUESTIONS[question_index]
     total_questions = len(QUIZ_QUESTIONS)
-    q_num = question_index + 1
+    question_data = QUIZ_QUESTIONS[question_index]
+    progress_value = (question_index + 1) / total_questions
     saved_answer = st.session_state["quiz_answers"].get(question_index, 0)
 
-    show_step(0.66, "Step 2 of 3 \u2014 Personality Quiz")
+    progress_col, percent_col = st.columns([3, 1])
+    with progress_col:
+        st.caption(f"Question {question_index + 1} of {total_questions}")
+    with percent_col:
+        st.markdown(
+            f"<p style='color:var(--primary);text-align:right;margin:0;font-size:12px;font-weight:600;'>{round(progress_value * 100)}%</p>",
+            unsafe_allow_html=True,
+        )
+    st.progress(progress_value)
 
-    if st.button(f"{LEFT_ARROW} Back"):
-        set_page("profile")
-        st.rerun()
-
-    st.markdown("<br>", unsafe_allow_html=True)
-    st.caption(f"Question {q_num} of {total_questions}")
-    st.subheader(question_data["question"])
-
+    st.markdown("<div class='quiz-card'>", unsafe_allow_html=True)
+    st.markdown(f"## {escape(question_data['question'])}")
     selected_option_index = st.radio(
         "Choose one",
         range(len(question_data["options"])),
         format_func=lambda option_index: question_data["options"][option_index][0],
         index=saved_answer,
+        label_visibility="collapsed",
         key=f"quiz_question_{question_index}",
     )
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
-    button_label = (
-        f"See My Results {RIGHT_ARROW}"
-        if question_index == total_questions - 1
-        else f"Next Question {RIGHT_ARROW}"
+    back_col, next_col = st.columns(2)
+    with back_col:
+        if st.button(f"{LEFT_ARROW} Back", use_container_width=True):
+            st.session_state["quiz_answers"][question_index] = selected_option_index
+            if question_index > 0:
+                st.session_state["quiz_question_index"] -= 1
+            else:
+                set_page("profile")
+            st.rerun()
+
+    with next_col:
+        is_last_question = question_index == total_questions - 1
+        button_label = (
+            f"See My Results {RIGHT_ARROW}"
+            if is_last_question
+            else f"Next Question {RIGHT_ARROW}"
+        )
+        if st.button(button_label, use_container_width=True, type="primary"):
+            st.session_state["quiz_answers"][question_index] = selected_option_index
+            if is_last_question:
+                st.session_state["personality_scores"] = calculate_field_scores(
+                    st.session_state["quiz_answers"]
+                )
+                st.session_state.pop("top_recommendations", None)
+                set_page("results")
+            else:
+                st.session_state["quiz_question_index"] += 1
+            st.rerun()
+
+    render_shell_end()
+
+
+def badge_class(label):
+    if label == "Slightly Over Budget" or label == "Reach":
+        return "info-pill danger-pill"
+    return "info-pill"
+
+
+def render_bullet_list(items):
+    if not items:
+        return "<ul class='raahi-list'><li>No details available yet.</li></ul>"
+
+    list_items = "".join(f"<li>{escape(str(item))}</li>" for item in items)
+    return f"<ul class='raahi-list'>{list_items}</ul>"
+
+
+def render_result_card(rank, result):
+    medal_class = {1: "gold", 2: "silver", 3: "bronze"}.get(rank, "bronze")
+    admission_label = result.get("admission_label", "Unknown")
+    budget_label = result.get("budget_label", "Unknown")
+    university_name = result.get("university_name", "Unknown university")
+    program_name = result.get("program_name", "Unknown program")
+    city = result.get("city", "Unknown city")
+    why_list = result.get("why_list", [])
+    risk_list = result.get("risk_list", [])
+    card_class = "result-card best" if rank == 1 else "result-card"
+
+    risk_html = ""
+    if risk_list:
+        risk_html = (
+            "<p class='mini-heading'>Risk notes</p>"
+            f"{render_bullet_list(risk_list)}"
+        )
+
+    st.markdown(
+        f"""
+        <div class="{card_class}">
+            <div class="result-badge">{escape(str(admission_label))}</div>
+            <div class="result-head">
+                <div class="medal {medal_class}">award</div>
+                <div>
+                    <h3>{escape(str(program_name))}</h3>
+                    <p>account_balance {escape(str(university_name))}, {escape(str(city))}</p>
+                </div>
+            </div>
+            <div class="pill-row">
+                <span class="{badge_class(admission_label)}">star {escape(str(admission_label))}</span>
+                <span class="{badge_class(budget_label)}">payments {escape(str(budget_label))}</span>
+            </div>
+            <p class="mini-heading">Why this match</p>
+            {render_bullet_list(why_list)}
+            {risk_html}
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
-    if st.button(button_label, use_container_width=True, type="primary"):
-        st.session_state["quiz_answers"][question_index] = selected_option_index
 
-        if question_index == total_questions - 1:
-            st.session_state["field_scores"] = calculate_field_scores(
-                st.session_state["quiz_answers"]
-            )
-            st.session_state.pop("top_recommendations", None)
-            set_page("results")
-        else:
-            st.session_state["quiz_question_index"] += 1
+def render_reality_check(result, field_data):
+    salary_min = field_data.get("salary_min_pkr")
+    salary_max = field_data.get("salary_max_pkr")
+    demand = field_data.get("demand", "Unknown")
+    jobs = field_data.get("jobs_after_3_years", [])
+    reality_note = field_data.get("reality_note")
+    growth_outlook = field_data.get("growth_outlook")
 
-        st.rerun()
+    with st.expander(
+        f"Salary and reality check \u2014 {result.get('program_name', 'Program')}"
+    ):
+        st.write(
+            "Salary outlook: "
+            f"PKR {_format_money(salary_min)}-{_format_money(salary_max)}/month"
+        )
+        st.write(f"Market demand: {demand}")
+        if jobs:
+            st.markdown("**What graduates actually do**")
+            for job in jobs:
+                st.markdown(f"- {escape(str(job))}")
+        if reality_note:
+            st.write(reality_note)
+        if growth_outlook:
+            st.caption(f"Growth outlook: {growth_outlook}")
 
 
-def show_results_page():
-    profile = st.session_state.get("student_profile")
-    scores = st.session_state.get("field_scores", {})
+def render_results_page():
+    render_shell_start("results")
+    render_step_indicator(3)
 
-    if not profile or not scores:
+    scores = st.session_state.get("personality_scores", {})
+    if not scores:
         st.warning("Please complete your profile and quiz first.")
         if st.button("Start Over", use_container_width=True):
             reset_app()
             st.rerun()
+        render_shell_end()
         return
 
-    show_step(1.0, "Step 3 of 3 \u2014 Your Results")
-
     top_field = get_top_interest(scores)
-    fsc = profile["fsc_percentage"]
-    budget = profile["annual_budget_pkr"]
-    st.info(f"FSc: {fsc:.1f}% {MIDDLE_DOT} Budget: PKR {budget:,}/year {MIDDLE_DOT} Top interest: {top_field}")
-
-    fields_data = load_fields_data()
+    st.markdown(
+        f"""
+        <div class="summary-bar">
+            <span>person {st.session_state['fsc']:.1f}% FSc | {escape(st.session_state['city'])}</span>
+            <span>payments PKR {st.session_state['budget']:,}/yr</span>
+            <span style="color:var(--primary);font-weight:600;">{escape(top_field)}</span>
+        </div>
+        <div class="results-title">
+            <span style="color:var(--primary);font-size:32px;">{COMPASS_ICON}</span>
+            <h2>Your Raahi Results</h2>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     if "top_recommendations" not in st.session_state:
         with st.spinner("Finding your most realistic paths..."):
             st.session_state["top_recommendations"] = matcher.get_top_3(
-                fsc_percentage=profile["fsc_percentage"],
-                annual_budget=profile["annual_budget_pkr"],
-                preferred_cities=profile["preferred_study_cities"],
-                gender=profile["gender"],
+                fsc_percentage=st.session_state["fsc"],
+                annual_budget=st.session_state["budget"],
+                preferred_cities=st.session_state["preferred_cities"],
+                gender=st.session_state["gender"],
                 personality_scores=scores,
             )
 
     recommendations = st.session_state.get("top_recommendations", [])
-    st.markdown("<br>", unsafe_allow_html=True)
+    fields_data = load_fields_data()
 
     if not recommendations:
         st.warning(
@@ -461,21 +1164,31 @@ def show_results_page():
     else:
         for index, result in enumerate(recommendations[:3], start=1):
             field_data = get_field_data_for_result(result, fields_data)
-            show_result_card(result.get("rank", index), result, field_data)
+            render_result_card(result.get("rank", index), result)
+            render_reality_check(result, field_data)
 
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("Start Over", use_container_width=True):
+    if st.button("refresh Start Over", use_container_width=True):
         reset_app()
         st.rerun()
+
+    render_shell_end()
+
+
+def _format_money(value):
+    try:
+        return f"{int(value):,}"
+    except (TypeError, ValueError):
+        return "N/A"
 
 
 initialize_state()
 
-current_page = st.session_state.get("page", "profile")
+current_page = st.session_state.get("current_page", "profile")
 
 if current_page == "profile":
-    show_profile_page()
+    render_profile_page()
 elif current_page == "quiz":
-    show_quiz_page()
+    render_quiz_page()
 else:
-    show_results_page()
+    render_results_page()
