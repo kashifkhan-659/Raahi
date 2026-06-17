@@ -1,0 +1,302 @@
+{
+  "Computer Science": {
+    "salary_min_pkr": 80000,
+    "salary_max_pkr": 300000,
+    "demand": "High",
+    "saturation": "Medium",
+    "growth_outlook": "Strong",
+    "market_trend": "Growing",
+    "top_employers_pakistan": [
+      "Systems Limited",
+      "NETSOL Technologies",
+      "10Pearls",
+      "Freelance/Remote",
+      "Startups"
+    ],
+    "years_to_first_job": 4,
+    "remote_work_possible": true,
+    "saturation_note": "CS is crowded at the entry level, so a real portfolio and internship experience matter more than CGPA alone.",
+    "jobs_after_3_years": [
+      "Software Engineer",
+      "Backend Developer",
+      "QA Engineer",
+      "Freelance Developer"
+    ],
+    "reality_note": "Competitive field. Top graduates with strong portfolios and internships can earn well, but weak coding fundamentals make entry-level hiring difficult."
+  },
+  "Software Engineering": {
+    "salary_min_pkr": 75000,
+    "salary_max_pkr": 280000,
+    "demand": "High",
+    "saturation": "Medium",
+    "growth_outlook": "Strong",
+    "market_trend": "Growing",
+    "top_employers_pakistan": [
+      "Afiniti",
+      "Devsinc",
+      "Arbisoft",
+      "Contour Software",
+      "Product startups"
+    ],
+    "years_to_first_job": 4,
+    "remote_work_possible": true,
+    "saturation_note": "Software engineering rewards skill quickly, but fresh graduates without projects often get filtered out early.",
+    "jobs_after_3_years": [
+      "Software Engineer",
+      "Full Stack Developer",
+      "Mobile App Developer",
+      "DevOps Associate"
+    ],
+    "reality_note": "Good career path if the student builds real projects. Degree name matters less than problem-solving ability, GitHub work, internships, and communication skills."
+  },
+  "Artificial Intelligence": {
+    "salary_min_pkr": 90000,
+    "salary_max_pkr": 350000,
+    "demand": "High",
+    "saturation": "Medium",
+    "growth_outlook": "Strong",
+    "market_trend": "Growing",
+    "top_employers_pakistan": [
+      "Afiniti",
+      "i2c",
+      "VentureDive",
+      "AI startups",
+      "Remote AI teams"
+    ],
+    "years_to_first_job": 6,
+    "remote_work_possible": true,
+    "saturation_note": "AI has hype and opportunity, but real junior AI roles are fewer than software roles and require stronger math and deployment skills.",
+    "jobs_after_3_years": [
+      "Machine Learning Engineer",
+      "AI Engineer",
+      "Computer Vision Engineer",
+      "NLP Engineer"
+    ],
+    "reality_note": "High upside but fewer true entry-level AI roles. Many jobs still require strong software engineering, math, Python, and real model deployment experience."
+  },
+  "Data Science": {
+    "salary_min_pkr": 85000,
+    "salary_max_pkr": 300000,
+    "demand": "High",
+    "saturation": "Medium",
+    "growth_outlook": "Strong",
+    "market_trend": "Growing",
+    "top_employers_pakistan": [
+      "Jazz",
+      "Careem",
+      "i2c",
+      "Banks and fintechs",
+      "E-commerce companies"
+    ],
+    "years_to_first_job": 5,
+    "remote_work_possible": true,
+    "saturation_note": "Data science is competitive because many applicants know tools, but fewer can solve messy business problems with clean analysis.",
+    "jobs_after_3_years": [
+      "Data Analyst",
+      "Data Scientist",
+      "Business Intelligence Analyst",
+      "Analytics Engineer"
+    ],
+    "reality_note": "Growing field, but many Pakistani companies still have messy data systems. Students need SQL, statistics, Python, dashboards, and business understanding to stand out."
+  },
+  "Electrical Engineering": {
+    "salary_min_pkr": 45000,
+    "salary_max_pkr": 180000,
+    "demand": "Medium",
+    "saturation": "High",
+    "growth_outlook": "Moderate",
+    "market_trend": "Stable",
+    "top_employers_pakistan": [
+      "WAPDA",
+      "NTDC",
+      "K-Electric",
+      "Siemens Pakistan",
+      "Telecom sector"
+    ],
+    "years_to_first_job": 7,
+    "remote_work_possible": false,
+    "saturation_note": "Electrical engineering has solid sectors, but graduate supply is high and many students shift toward software or telecom for better starts.",
+    "jobs_after_3_years": [
+      "Electrical Engineer",
+      "Power Systems Engineer",
+      "Embedded Systems Engineer",
+      "Telecom Engineer"
+    ],
+    "reality_note": "Traditional engineering hiring is slower than IT. Better outcomes usually come from power sector roles, embedded systems, telecom, automation, or shifting into software."
+  },
+  "Mechanical Engineering": {
+    "salary_min_pkr": 40000,
+    "salary_max_pkr": 160000,
+    "demand": "Medium",
+    "saturation": "High",
+    "growth_outlook": "Moderate",
+    "market_trend": "Stable",
+    "top_employers_pakistan": [
+      "Engro",
+      "Packages Group",
+      "Atlas Honda",
+      "Millat Tractors",
+      "Manufacturing sector"
+    ],
+    "years_to_first_job": 8,
+    "remote_work_possible": false,
+    "saturation_note": "Mechanical engineering is respected but crowded, and the better early roles usually require plant exposure, CAD skills, and internships.",
+    "jobs_after_3_years": [
+      "Mechanical Engineer",
+      "Maintenance Engineer",
+      "Manufacturing Engineer",
+      "Design Engineer"
+    ],
+    "reality_note": "Respectable degree but local industry absorbs graduates slowly. Strong CAD, manufacturing exposure, internships, and willingness to work on-site matter a lot."
+  },
+  "Civil Engineering": {
+    "salary_min_pkr": 35000,
+    "salary_max_pkr": 150000,
+    "demand": "Medium",
+    "saturation": "High",
+    "growth_outlook": "Cyclical",
+    "market_trend": "Stable",
+    "top_employers_pakistan": [
+      "NESPAK",
+      "FWO",
+      "NHA",
+      "Construction firms",
+      "Real estate developers"
+    ],
+    "years_to_first_job": 8,
+    "remote_work_possible": false,
+    "saturation_note": "Civil engineering depends heavily on construction cycles, so fresh graduates often face low starting salaries and site-heavy work.",
+    "jobs_after_3_years": [
+      "Site Engineer",
+      "Structural Engineer",
+      "Quantity Surveyor",
+      "Project Coordinator"
+    ],
+    "reality_note": "Early salaries can be low and site work is demanding. Career growth depends heavily on construction cycles, project experience, software skills, and professional networking."
+  },
+  "BBA / Business Administration": {
+    "salary_min_pkr": 45000,
+    "salary_max_pkr": 200000,
+    "demand": "Medium",
+    "saturation": "High",
+    "growth_outlook": "Moderate",
+    "market_trend": "Stable",
+    "top_employers_pakistan": [
+      "Unilever Pakistan",
+      "Nestle Pakistan",
+      "Jazz",
+      "Banks",
+      "Retail and FMCG sector"
+    ],
+    "years_to_first_job": 6,
+    "remote_work_possible": false,
+    "saturation_note": "BBA is very saturated unless the student has strong communication, internships, Excel skills, and a clear specialization.",
+    "jobs_after_3_years": [
+      "Management Trainee",
+      "Marketing Executive",
+      "Sales Executive",
+      "Operations Associate"
+    ],
+    "reality_note": "Very broad degree with mixed outcomes. Graduates from top schools do much better; others need internships, English communication, Excel, analytics, and sales confidence."
+  },
+  "Accounting & Finance": {
+    "salary_min_pkr": 55000,
+    "salary_max_pkr": 250000,
+    "demand": "Medium",
+    "saturation": "Medium",
+    "growth_outlook": "Stable",
+    "market_trend": "Stable",
+    "top_employers_pakistan": [
+      "Big Four audit firms",
+      "Meezan Bank",
+      "HBL",
+      "Fintech companies",
+      "Corporate finance departments"
+    ],
+    "years_to_first_job": 5,
+    "remote_work_possible": true,
+    "saturation_note": "Finance has steady demand, but the best roles usually go to students with CA, ACCA, CFA progress, or strong analytics skills.",
+    "jobs_after_3_years": [
+      "Financial Analyst",
+      "Audit Associate",
+      "Accounts Officer",
+      "Tax Associate"
+    ],
+    "reality_note": "More stable than many business degrees, but growth is stronger with ACCA, CA, CFA progress, Excel, Power BI, and practical accounting software experience."
+  },
+  "Psychology": {
+    "salary_min_pkr": 35000,
+    "salary_max_pkr": 150000,
+    "demand": "Medium",
+    "saturation": "Medium",
+    "growth_outlook": "Growing",
+    "market_trend": "Growing",
+    "top_employers_pakistan": [
+      "Hospitals",
+      "Schools",
+      "NGOs",
+      "HR departments",
+      "Private clinics"
+    ],
+    "years_to_first_job": 7,
+    "remote_work_possible": true,
+    "saturation_note": "Psychology is growing, but decent income often requires supervised practice, specialization, and trust-building over time.",
+    "jobs_after_3_years": [
+      "Counselor",
+      "Clinical Psychology Assistant",
+      "HR Associate",
+      "School Counselor"
+    ],
+    "reality_note": "Mental health awareness is rising, but income can be modest without further specialization, supervised clinical hours, private practice, or organizational psychology experience."
+  },
+  "Pharmacy": {
+    "salary_min_pkr": 45000,
+    "salary_max_pkr": 180000,
+    "demand": "Medium",
+    "saturation": "High",
+    "growth_outlook": "Stable",
+    "market_trend": "Stable",
+    "top_employers_pakistan": [
+      "Getz Pharma",
+      "GSK Pakistan",
+      "Martin Dow",
+      "Hospitals",
+      "Retail pharmacy chains"
+    ],
+    "years_to_first_job": 6,
+    "remote_work_possible": false,
+    "saturation_note": "Pharmacy has many graduates chasing limited attractive roles, so hospital, industry, and regulatory paths are more valuable than basic retail jobs.",
+    "jobs_after_3_years": [
+      "Pharmacist",
+      "Hospital Pharmacist",
+      "Regulatory Affairs Officer",
+      "Medical Sales Representative"
+    ],
+    "reality_note": "Stable healthcare-related path, but retail and entry-level roles often pay less than students expect. Better outcomes come from hospital, industry, regulatory, or multinational roles."
+  },
+  "MBBS / Medicine": {
+    "salary_min_pkr": 70000,
+    "salary_max_pkr": 350000,
+    "demand": "High",
+    "saturation": "Medium",
+    "growth_outlook": "Strong",
+    "market_trend": "Stable",
+    "top_employers_pakistan": [
+      "Government hospitals",
+      "Aga Khan University Hospital",
+      "Shaukat Khanum Memorial Cancer Hospital",
+      "Private hospitals",
+      "Clinics and specialist practices"
+    ],
+    "years_to_first_job": 12,
+    "remote_work_possible": false,
+    "saturation_note": "MBBS has high job security, but it requires 5 years plus house job before earning well and specialization is often necessary.",
+    "jobs_after_3_years": [
+      "Medical Officer",
+      "House Officer",
+      "Resident Doctor",
+      "General Practitioner"
+    ],
+    "reality_note": "Strong long-term profession but the path is long, stressful, and expensive. Early earnings after graduation can be modest until specialization, residency, or private practice develops."
+  }
+}

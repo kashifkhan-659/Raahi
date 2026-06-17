@@ -1,0 +1,111 @@
+university_name,university_short,city,program_name,degree_type,annual_fee_pkr,merit_cutoff_percentage,gender_policy,hostel_available,sector,ranking_tier
+FAST National University Islamabad Campus,FAST-ISB,Islamabad,BS Computer Science,BS,360000,78.5,co-education,yes,private,A
+FAST National University Islamabad Campus,FAST-ISB,Islamabad,BS Software Engineering,BS,360000,76.0,co-education,yes,private,A
+FAST National University Islamabad Campus,FAST-ISB,Islamabad,BS Artificial Intelligence,BS,360000,77.0,co-education,yes,private,A
+FAST National University Islamabad Campus,FAST-ISB,Islamabad,BS Data Science,BS,360000,75.0,co-education,yes,private,A
+FAST National University Islamabad Campus,FAST-ISB,Islamabad,BS Electrical Engineering,BS,360000,62.0,co-education,yes,private,A
+FAST National University Islamabad Campus,FAST-ISB,Islamabad,BBA,BBA,360000,58.0,co-education,yes,private,A
+FAST National University Islamabad Campus,FAST-ISB,Islamabad,BS Accounting & Finance,BS,360000,57.0,co-education,yes,private,A
+FAST National University Lahore Campus,FAST-LHR,Lahore,BS Computer Science,BS,360000,77.0,co-education,yes,private,A
+FAST National University Lahore Campus,FAST-LHR,Lahore,BS Software Engineering,BS,360000,75.0,co-education,yes,private,A
+FAST National University Lahore Campus,FAST-LHR,Lahore,BS Artificial Intelligence,BS,360000,76.0,co-education,yes,private,A
+FAST National University Lahore Campus,FAST-LHR,Lahore,BS Data Science,BS,360000,74.0,co-education,yes,private,A
+FAST National University Lahore Campus,FAST-LHR,Lahore,BS Electrical Engineering,BS,360000,60.0,co-education,yes,private,A
+FAST National University Lahore Campus,FAST-LHR,Lahore,BBA,BBA,360000,56.0,co-education,yes,private,A
+FAST National University Lahore Campus,FAST-LHR,Lahore,BS Accounting & Finance,BS,360000,55.0,co-education,yes,private,A
+FAST National University Karachi Campus,FAST-KHI,Karachi,BS Computer Science,BS,360000,70.0,co-education,no,private,A
+FAST National University Karachi Campus,FAST-KHI,Karachi,BS Software Engineering,BS,360000,68.0,co-education,no,private,A
+FAST National University Karachi Campus,FAST-KHI,Karachi,BS Artificial Intelligence,BS,360000,69.0,co-education,no,private,A
+FAST National University Karachi Campus,FAST-KHI,Karachi,BS Data Science,BS,360000,67.0,co-education,no,private,A
+FAST National University Karachi Campus,FAST-KHI,Karachi,BS Electrical Engineering,BS,360000,55.0,co-education,no,private,A
+FAST National University Karachi Campus,FAST-KHI,Karachi,BBA,BBA,360000,52.0,co-education,no,private,A
+FAST National University Karachi Campus,FAST-KHI,Karachi,BS Accounting & Finance,BS,360000,51.0,co-education,no,private,A
+National University of Sciences and Technology,NUST,Islamabad,BS Computer Science,BS,195000,84.0,co-education,yes,public,A
+National University of Sciences and Technology,NUST,Islamabad,BS Software Engineering,BS,195000,83.0,co-education,yes,public,A
+National University of Sciences and Technology,NUST,Islamabad,BS Artificial Intelligence,BS,195000,84.5,co-education,yes,public,A
+National University of Sciences and Technology,NUST,Islamabad,BS Data Science,BS,195000,82.0,co-education,yes,public,A
+National University of Sciences and Technology,NUST,Islamabad,BS Electrical Engineering,BE,195000,76.0,co-education,yes,public,A
+National University of Sciences and Technology,NUST,Islamabad,BS Mechanical Engineering,BE,195000,75.0,co-education,yes,public,A
+National University of Sciences and Technology,NUST,Islamabad,BS Civil Engineering,BE,195000,72.0,co-education,yes,public,A
+National University of Sciences and Technology,NUST,Islamabad,BBA,BBA,195000,77.0,co-education,yes,public,A
+National University of Sciences and Technology,NUST,Islamabad,BS Accounting & Finance,BS,195000,76.0,co-education,yes,public,A
+COMSATS University Islamabad,CUI,Islamabad,BS Computer Science,BS,170000,78.0,co-education,yes,public,A
+COMSATS University Islamabad,CUI,Islamabad,BS Software Engineering,BS,170000,76.0,co-education,yes,public,A
+COMSATS University Islamabad,CUI,Islamabad,BS Artificial Intelligence,BS,170000,75.0,co-education,yes,public,A
+COMSATS University Islamabad,CUI,Islamabad,BS Data Science,BS,170000,74.0,co-education,yes,public,A
+COMSATS University Islamabad,CUI,Islamabad,BS Electrical Engineering,BS,170000,66.0,co-education,yes,public,A
+COMSATS University Islamabad,CUI,Islamabad,BBA,BBA,170000,60.0,co-education,yes,public,A
+COMSATS University Islamabad,CUI,Islamabad,BS Accounting & Finance,BS,170000,58.0,co-education,yes,public,A
+COMSATS University Islamabad,CUI,Islamabad,BS Psychology,BS,170000,62.0,co-education,yes,public,A
+University of Engineering and Technology Lahore,UET-LHR,Lahore,BS Computer Science,BS,95000,85.0,co-education,yes,public,A
+University of Engineering and Technology Lahore,UET-LHR,Lahore,BS Software Engineering,BS,95000,82.0,co-education,yes,public,A
+University of Engineering and Technology Lahore,UET-LHR,Lahore,BS Electrical Engineering,BS,95000,74.0,co-education,yes,public,A
+University of Engineering and Technology Lahore,UET-LHR,Lahore,BS Mechanical Engineering,BS,95000,76.0,co-education,yes,public,A
+University of Engineering and Technology Lahore,UET-LHR,Lahore,BS Civil Engineering,BS,95000,70.0,co-education,yes,public,A
+University of Engineering and Technology Taxila,UET-TAX,Taxila,BS Software Engineering,BS,90000,73.0,co-education,yes,public,B
+University of Engineering and Technology Taxila,UET-TAX,Taxila,BS Electrical Engineering,BS,90000,66.0,co-education,yes,public,B
+University of Engineering and Technology Taxila,UET-TAX,Taxila,BS Mechanical Engineering,BS,90000,68.0,co-education,yes,public,B
+University of Engineering and Technology Taxila,UET-TAX,Taxila,BS Civil Engineering,BS,90000,63.0,co-education,yes,public,B
+Lahore University of Management Sciences,LUMS,Lahore,BS Computer Science,BS,600000,88.0,co-education,yes,private,A
+Lahore University of Management Sciences,LUMS,Lahore,BS Electrical Engineering,BS,600000,84.0,co-education,yes,private,A
+Lahore University of Management Sciences,LUMS,Lahore,BS Accounting & Finance,BS,600000,82.0,co-education,yes,private,A
+Institute of Business Administration Karachi,IBA,Karachi,BS Computer Science,BS,550000,76.0,co-education,yes,private,A
+Institute of Business Administration Karachi,IBA,Karachi,BBA,BBA,550000,74.0,co-education,yes,private,A
+Institute of Business Administration Karachi,IBA,Karachi,BS Accounting & Finance,BS,550000,73.0,co-education,yes,private,A
+Quaid-i-Azam University Islamabad,QAU,Islamabad,BS Computer Science,BS,90000,84.0,co-education,yes,public,A
+Quaid-i-Azam University Islamabad,QAU,Islamabad,BS Artificial Intelligence,BS,90000,82.0,co-education,yes,public,A
+Quaid-i-Azam University Islamabad,QAU,Islamabad,BS Data Science,BS,90000,81.0,co-education,yes,public,A
+Quaid-i-Azam University Islamabad,QAU,Islamabad,BS Psychology,BS,90000,76.0,co-education,yes,public,A
+Quaid-i-Azam University Islamabad,QAU,Islamabad,BS Pharmacy,Pharm-D,90000,86.0,co-education,yes,public,A
+University of Lahore,UOL,Lahore,BS Computer Science,BS,320000,62.0,co-education,yes,private,B
+University of Lahore,UOL,Lahore,BS Software Engineering,BS,320000,60.0,co-education,yes,private,B
+University of Lahore,UOL,Lahore,BS Artificial Intelligence,BS,330000,59.0,co-education,yes,private,B
+University of Lahore,UOL,Lahore,BS Data Science,BS,330000,58.0,co-education,yes,private,B
+University of Lahore,UOL,Lahore,BS Electrical Engineering,BS,300000,55.0,co-education,yes,private,B
+University of Lahore,UOL,Lahore,BS Mechanical Engineering,BS,300000,54.0,co-education,yes,private,B
+University of Lahore,UOL,Lahore,BS Civil Engineering,BS,300000,53.0,co-education,yes,private,B
+University of Lahore,UOL,Lahore,BBA,BBA,300000,52.0,co-education,yes,private,B
+University of Lahore,UOL,Lahore,BS Accounting & Finance,BS,300000,51.0,co-education,yes,private,B
+University of Lahore,UOL,Lahore,BS Psychology,BS,280000,55.0,co-education,yes,private,B
+University of Lahore,UOL,Lahore,BS Pharmacy,Pharm-D,420000,70.0,co-education,yes,private,B
+University of Lahore,UOL,Lahore,MBBS,MBBS,600000,82.0,co-education,yes,private,B
+Bahria University Islamabad,BU,Islamabad,BS Computer Science,BS,280000,66.0,co-education,no,private,B
+Bahria University Islamabad,BU,Islamabad,BS Software Engineering,BS,280000,64.0,co-education,no,private,B
+Bahria University Islamabad,BU,Islamabad,BS Artificial Intelligence,BS,290000,63.0,co-education,no,private,B
+Bahria University Islamabad,BU,Islamabad,BS Data Science,BS,290000,62.0,co-education,no,private,B
+Bahria University Islamabad,BU,Islamabad,BS Electrical Engineering,BS,280000,55.0,co-education,no,private,B
+Bahria University Islamabad,BU,Islamabad,BBA,BBA,270000,54.0,co-education,no,private,B
+Bahria University Islamabad,BU,Islamabad,BS Accounting & Finance,BS,270000,53.0,co-education,no,private,B
+Bahria University Islamabad,BU,Islamabad,BS Psychology,BS,260000,56.0,co-education,no,private,B
+Air University Islamabad,AU,Islamabad,BS Computer Science,BS,190000,70.0,co-education,yes,public,B
+Air University Islamabad,AU,Islamabad,BS Software Engineering,BS,190000,68.0,co-education,yes,public,B
+Air University Islamabad,AU,Islamabad,BS Artificial Intelligence,BS,190000,69.0,co-education,yes,public,B
+Air University Islamabad,AU,Islamabad,BS Data Science,BS,190000,67.0,co-education,yes,public,B
+Air University Islamabad,AU,Islamabad,BS Electrical Engineering,BS,190000,60.0,co-education,yes,public,B
+Air University Islamabad,AU,Islamabad,BS Mechanical Engineering,BS,190000,58.0,co-education,yes,public,B
+Air University Islamabad,AU,Islamabad,BBA,BBA,190000,56.0,co-education,yes,public,B
+Air University Islamabad,AU,Islamabad,BS Accounting & Finance,BS,190000,55.0,co-education,yes,public,B
+NED University of Engineering and Technology,NED,Karachi,BS Computer Science,BS,90000,82.0,co-education,yes,public,A
+NED University of Engineering and Technology,NED,Karachi,BS Software Engineering,BS,90000,80.0,co-education,yes,public,A
+NED University of Engineering and Technology,NED,Karachi,BS Artificial Intelligence,BS,90000,79.0,co-education,yes,public,A
+NED University of Engineering and Technology,NED,Karachi,BS Data Science,BS,90000,78.0,co-education,yes,public,A
+NED University of Engineering and Technology,NED,Karachi,BS Electrical Engineering,BS,90000,74.0,co-education,yes,public,A
+NED University of Engineering and Technology,NED,Karachi,BS Mechanical Engineering,BS,90000,75.0,co-education,yes,public,A
+NED University of Engineering and Technology,NED,Karachi,BS Civil Engineering,BS,90000,71.0,co-education,yes,public,A
+University of Karachi,UOK,Karachi,BS Computer Science,BS,70000,78.0,co-education,no,public,B
+University of Karachi,UOK,Karachi,BS Software Engineering,BS,70000,75.0,co-education,no,public,B
+University of Karachi,UOK,Karachi,BS Artificial Intelligence,BS,70000,74.0,co-education,no,public,B
+University of Karachi,UOK,Karachi,BS Data Science,BS,70000,73.0,co-education,no,public,B
+University of Karachi,UOK,Karachi,BBA,BBA,70000,66.0,co-education,no,public,B
+University of Karachi,UOK,Karachi,BS Accounting & Finance,BS,70000,64.0,co-education,no,public,B
+University of Karachi,UOK,Karachi,BS Psychology,BS,70000,70.0,co-education,no,public,B
+University of Karachi,UOK,Karachi,BS Pharmacy,Pharm-D,70000,84.0,co-education,no,public,B
+University of the Punjab,PU,Lahore,BS Computer Science,BS,80000,82.0,co-education,yes,public,A
+University of the Punjab,PU,Lahore,BS Software Engineering,BS,80000,80.0,co-education,yes,public,A
+University of the Punjab,PU,Lahore,BS Data Science,BS,80000,78.0,co-education,yes,public,A
+University of the Punjab,PU,Lahore,BS Electrical Engineering,BS,80000,72.0,co-education,yes,public,A
+University of the Punjab,PU,Lahore,BBA,BBA,80000,70.0,co-education,yes,public,A
+University of the Punjab,PU,Lahore,BS Accounting & Finance,BS,80000,69.0,co-education,yes,public,A
+University of the Punjab,PU,Lahore,BS Psychology,BS,80000,74.0,co-education,yes,public,A
+University of the Punjab,PU,Lahore,BS Pharmacy,Pharm-D,80000,86.0,co-education,yes,public,A
+Aga Khan University,AKU,Karachi,MBBS,MBBS,600000,88.0,co-education,yes,private,A
