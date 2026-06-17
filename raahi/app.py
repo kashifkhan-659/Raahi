@@ -438,7 +438,7 @@ guidance message for this student.
             st.info(response.text)
 
         except Exception as e:
-            st.warning("Could not generate AI guidance at this time.")
+            st.error(f"Gemini error: {str(e)}")
 
     st.markdown("---")
     if st.button("↺ Start Over", use_container_width=True):
